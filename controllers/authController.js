@@ -1,32 +1,99 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require("../models/userModel");
 
-const registerUser = async (req, res) => {
-    const { fullName, email, password } = req.body;
+
+const registerUser = async (req, res, next) => {
+  
+  try {
+    //Destrucuting data from body
+    const { name, email, password } = req.body;
+
+    //Validating that all fields are present
+    if (!name || !email || !password) {
+      res.status(400);
+      throw new Error("Please fill all fields");
+    }
+
+    //Ensuring that password length isnt less than 8
+    if (password.length < 8) {
+      res.status(400);
+      throw new Error("Password should be greater than or equal to 8");
+    }
+
+    const user = await User.findOne({email: email});
+
+    if (user) {
+      res.status(302);
+      throw new Error("User with that email already exists");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const createdUser = new User({name,email, password: hashedPassword});
+
+    await createdUser.save();
     
-    // Save user to database (mock database for now)
-    // db.users.push({ fullName, email, password: hashedPassword });
-    res.status(201).json({ message: 'User created' });
+    res.status(201).json({
+      token: generateToken(createdUser._id),
+      message: `Welcome ${createdUser.name}`});
+
+  } catch (error) {
+      next(error.message);
+  }
+    
+}
+
+const authenticateUser = async (req, res, next) => {
+    
+  try {
+    const {email, password} = req.body;
+
+    if (!email || !password) {
+      res.status(400);
+      throw new Error("Please fill all fields");
+    }
+
+    const user = await User.findOne({email});
+
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      res.status(404);
+      throw new Error("Incorrect credentials");
+    }
+
+    res.status(200).json({id: generateToken(user._id), message: `Welcome ${user.name}`});
+
+  } catch(error) {
+    next(error.message);
+  }
+}
+
+//Delete user account
+const deleteAccount = async (req,res,next) => {
+  
+  try {
+    await User.findByIdAndDelete(req.id);
+
+    res.status(200).json({message: "Account deleted"});
+
+  } catch(error) {
+    next(error.message);
+  }
+}
+
+const generateToken = (id) => {
+  const token = jwt.sign({id}, process.env.JWT_SECRET_TOKEN);
+  return token;
 }
 
 
-const authenticateUser = async (req, res) => {
-    const { email, password } = req.body;
-  
-    // Get user from database (mocked for now)
-    const user = { email, password: 'hashedPasswordFromDB' };
-  
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (passwordMatch) {
-      const token = jwt.sign({ email: user.email }, 'secretKey', { expiresIn: '1h' });
-      res.json({ token });
-    } else {
-      res.status(401).json({ message: 'Invalid credentials' });
-    }
-  }
-
 module.exports = {
     registerUser,
-    authenticateUser
+    authenticateUser,
+    deleteAccount
 }
