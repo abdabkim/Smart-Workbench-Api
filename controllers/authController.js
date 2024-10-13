@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/userModel");
 
-
 const registerUser = async (req, res, next) => {
   
   try {
@@ -73,6 +72,25 @@ const authenticateUser = async (req, res, next) => {
   }
 }
 
+const getUser = async (req, res, next) => {
+  
+  try {
+
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      res.status(404);
+      throw new Error("Not found");
+    }
+
+    res.status(200).json({name: user.name, email: user.email, token: req.id});
+
+  } catch (error) {
+    next(error.message)
+  }
+
+}
+
 //Delete user account
 const deleteAccount = async (req,res,next) => {
   
@@ -95,5 +113,6 @@ const generateToken = (id) => {
 module.exports = {
     registerUser,
     authenticateUser,
-    deleteAccount
+    deleteAccount,
+    getUser
 }
