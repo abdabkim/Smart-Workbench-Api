@@ -5,6 +5,8 @@ const controlPanelRoutes = require('./routes/controlPanelRoutes');
 const monitoringRoutes = require('./routes/monitoringRoutes');
 const automationRoutes = require('./routes/automationRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const devicesRoutes = require("./routes/deviceRoutes");
+
 
 const dbConnect = require("./config/dbConfig");
 
@@ -18,10 +20,12 @@ dbConnect();
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/device', devicesRoutes)
 app.use('/control-panel', controlPanelRoutes);
 app.use('/monitoring', monitoringRoutes);
 app.use('/automation', automationRoutes);
 app.use('/settings', settingsRoutes);
+
 
 app.use(errorHandler);
 
