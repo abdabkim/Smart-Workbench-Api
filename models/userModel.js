@@ -12,6 +12,21 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, "Enter a password"]
+    },
+    profession: {
+        type: String,
+        required: [true, "Enter person's profession"]
+    },
+    photo_url: {
+        type: String,
+        required: [true, "Enter url for user"]
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: {
+        type: String
     }
 });
 

@@ -6,6 +6,7 @@ const monitoringRoutes = require('./routes/monitoringRoutes');
 const automationRoutes = require('./routes/automationRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const devicesRoutes = require("./routes/deviceRoutes");
+const path = require("path");
 
 
 const dbConnect = require("./config/dbConfig");
@@ -15,6 +16,8 @@ const errorHandler = require("./middlewares/errorMiddleware");
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join('uploads')));
 
 dbConnect();
 

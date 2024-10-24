@@ -1,13 +1,46 @@
 const express = require('express');
+const multer = require("multer");
+const fs = require("fs/promises");
 
-const { registerUser, authenticateUser, deleteAccount, getUser } = require("../controllers/authController");
+const { registerUser, verifyUser, authenticateUser, deleteAccount, getUser } = require("../controllers/authController");
 const authenticate = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+    destination: async function (req, file, cb) {
+
+        const uniqueSuffix = Math.floor((Math.random() *20) + 1);
+
+        const savedDirectory = `uploads/${req.body.name.replace(" ", "_")}_${uniqueSuffix}`;
+
+        await fs.mkdir(savedDirectory);
+            
+        cb(null, savedDirectory); 
+
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const fileFilter = (req,file,cb) => {
+    const allowedImagesTypes = /jpeg|jpg|png/;
+    const isImage = allowedImagesTypes.test(file.mimetype);
+
+    if (isImage) {
+        return cb(null, true);
+    }
+
+    cb(new Error("Wrong file format"));
+} 
+
+const upload = multer({storage: storage, fileFilter: fileFilter});
 
 // Sign Up
-router.post('/signup', registerUser);
+router.post('/signup', upload.single("photo"), registerUser);
+
+router.get('/verify/:token', verifyUser);
 
 // Login
 router.post('/login', authenticateUser);
