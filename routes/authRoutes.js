@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require("multer");
 const fs = require("fs/promises");
 
-const { registerUser, verifyUser, authenticateUser, deleteAccount, getUser } = require("../controllers/authController");
+const { registerUser, verifyUser, authenticateUser, deleteAccount, getUser, updatePassword } = require("../controllers/authController");
 const authenticate = require("../middlewares/authMiddleware");
 
 const router = express.Router();
@@ -40,6 +40,7 @@ const upload = multer({storage: storage, fileFilter: fileFilter});
 // Sign Up
 router.post('/signup', upload.single("photo"), registerUser);
 
+//Verify user
 router.get('/verify/:token', verifyUser);
 
 // Login
@@ -49,5 +50,7 @@ router.get('/getuser', authenticate, getUser);
 
 //Delete user account
 router.delete('/delete', authenticate, deleteAccount);
+
+router.put('/updatepassword', authenticate, updatePassword);
 
 module.exports = router;

@@ -140,7 +140,35 @@ const getUser = async (req, res, next) => {
   } catch (error) {
     next(error.message)
   }
+}
 
+const updatePassword = async (req, res, next) => {
+
+  try {
+    const {oldPassword, newPassword} = req.body;
+
+    const user = await User.findById(req.id);
+
+    if (!(await bcrypt.compare(oldPassword, user.password))) {
+      res.status(400);
+      throw new Error("Old password doesn't match");
+    }
+
+    if (newPassword.length < 8) {
+      res.status(400);
+      throw new Error("New password length is too short");
+    }
+
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = newHashedPassword;
+    await user.save();
+
+    res.status(200).json({message: "Password updated successfully"});
+
+  } catch(error) {
+    next(error.message);
+  }
 }
 
 //Delete user account
@@ -164,6 +192,7 @@ const generateToken = (id) => {
 
 module.exports = {
     registerUser,
+    updatePassword,
     verifyUser,
     authenticateUser,
     deleteAccount,
