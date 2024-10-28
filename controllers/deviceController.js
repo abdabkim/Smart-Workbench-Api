@@ -4,14 +4,14 @@ const Device = require("../models/deviceModel");
 const newDevice = async (req, res) => {
     
     try {
-        const {deviceName, category, status} = req.body;
+        const {deviceName, category, area, status} = req.body;
 
-        if (!deviceName || !category) {
+        if (!deviceName || !category || !area) {
             res.status(400);
             throw new Error("Please fill all fields");
         } 
 
-        const device = new Device({userId: req.id, deviceName,category,status});
+        const device = new Device({userId: req.id, area: area, deviceName, category, status});
 
         await device.save();
 

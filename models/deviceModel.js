@@ -17,6 +17,11 @@ const deviceSchema = mongoose.Schema({
         required: [true, "Please enter category"]
     },
 
+    area: {
+        type: String,
+        required: [true, "Please enter area"]
+    },
+
     status: {
         type: Boolean,
         required: [true, "Please enter status"],
