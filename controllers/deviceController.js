@@ -1,7 +1,7 @@
 const Device = require("../models/deviceModel");
 
 
-const newDevice = async (req, res) => {
+const newDevice = async (req, res, next) => {
     
     try {
         const {deviceName, category, area, status} = req.body;
@@ -23,7 +23,7 @@ const newDevice = async (req, res) => {
 
 }
 
-const getDevices = async (req, res) => {
+const getDevices = async (req, res, next) => {
 
     try {
         const devices = await Device.find({userId: req.id});
@@ -37,7 +37,7 @@ const getDevices = async (req, res) => {
 
 }
 
-const updateStatus = async (req, res) => {
+const updateStatus = async (req, res, next) => {
 
     try {
         const deviceID = req.params.id;
@@ -57,7 +57,7 @@ const updateStatus = async (req, res) => {
     }
 }
 
-const removeDevice = async (req, res) => {
+const removeDevice = async (req, res, next) => {
 
     try {
 
