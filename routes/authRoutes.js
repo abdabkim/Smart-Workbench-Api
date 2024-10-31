@@ -4,17 +4,16 @@ const fs = require("fs/promises");
 
 const { registerUser, verifyUser, authenticateUser, deleteAccount, getUser, updatePassword } = require("../controllers/authController");
 const authenticate = require("../middlewares/authMiddleware");
-
 const router = express.Router();
 
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
 
-        const uniqueSuffix = Math.floor((Math.random() *20) + 1);
+        const timestamp = Date.now();
 
-        const savedDirectory = `uploads/${req.body.name.replace(" ", "_")}_${uniqueSuffix}`;
+        const savedDirectory = `uploads/${req.body.name.replace(" ", "_")}_${timestamp}`;
 
-        await fs.mkdir(savedDirectory);
+        await fs.mkdir(savedDirectory, {recursive: true});
             
         cb(null, savedDirectory); 
 

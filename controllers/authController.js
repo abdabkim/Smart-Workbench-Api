@@ -50,6 +50,7 @@ const registerUser = async (req, res, next) => {
     
     await mail.sendMail({
       to: email,
+      from: "nolimitdesigns876@gmail.com",
       subject: "Verify your email",
       text: `Click this link to verify your email: ${verificationUrl}`
     });
