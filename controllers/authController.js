@@ -48,12 +48,12 @@ const registerUser = async (req, res, next) => {
     const verificationUrl = `http://localhost:${process.env.PORT}/auth/verify/${verificationToken}`;
     
     
-    await mail.sendMail({
-      to: email,
-      from: "nolimitdesigns876@gmail.com",
-      subject: "Verify your email",
-      text: `Click this link to verify your email: ${verificationUrl}`
-    });
+//    await mail.sendMail({
+//      to: email,
+//      from: "nolimitdesigns876@gmail.com",
+//      subject: "Verify your email",
+//      text: `Click this link to verify your email: ${verificationUrl}`
+//    });
     
     res.status(200).json({
       message: `Verification email sent`
@@ -113,10 +113,10 @@ const authenticateUser = async (req, res, next) => {
       throw new Error("Incorrect credentials");
     }
 
-    if (user.isVerified != true) {
-      res.status(400);
-      throw new Error("Please verify email");
-    }
+//    if (user.isVerified != true) {
+//      res.status(400);
+//      throw new Error("Please verify email");
+//s    }
 
     res.status(200).json({id: generateToken(user._id), message: `Welcome ${user.name}`});
 

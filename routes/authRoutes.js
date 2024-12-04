@@ -4,18 +4,19 @@ const fs = require("fs/promises");
 
 const { registerUser, verifyUser, authenticateUser, deleteAccount, getUser, updatePassword } = require("../controllers/authController");
 const authenticate = require("../middlewares/authMiddleware");
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
-    destination: async function (req, file, cb) {
+    destination: function (req, file, cb) {
+        // console.log(file)
+        // const timestamp = Date.now();
 
-        const timestamp = Date.now();
+        // const savedDirectory = `uploads/${req.body.name.replace(" ", "_")}_${timestamp}`;
 
-        const savedDirectory = `uploads/${req.body.name.replace(" ", "_")}_${timestamp}`;
-
-        await fs.mkdir(savedDirectory, {recursive: true});
+        // await fs.mkdir(savedDirectory, {recursive: true});
             
-        cb(null, savedDirectory); 
+        cb(null, 'uploads'); 
 
     },
     filename: function (req, file, cb) {
